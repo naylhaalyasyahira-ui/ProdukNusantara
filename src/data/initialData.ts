@@ -1,0 +1,620 @@
+import {
+  Product,
+  Store,
+  User,
+  CourierService,
+  PaymentMethod,
+  Review
+} from '../types';
+
+export const INITIAL_USERS: User[] = [
+  {
+    id: 'user-buyer-1',
+    name: 'Siti Rahmawati',
+    email: 'siti.rahma@gmail.com',
+    password: 'pembeli123',
+    phoneNumber: '0812-4567-8901',
+    role: 'buyer',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+    addresses: [
+      {
+        recipientName: 'Siti Rahmawati',
+        phoneNumber: '0812-4567-8901',
+        provinsi: 'Sulawesi Tenggara',
+        kabupaten: 'Kota Kendari',
+        kecamatan: 'Kambu',
+        desa: 'Kambu',
+        postalCode: '93231',
+        detailAlamat: 'Jl. H.E.A Mokodompit No. 42 (Dekat Kampus UHO)',
+        isPrimary: true
+      },
+      {
+        recipientName: 'Siti Rahmawati (Kantor)',
+        phoneNumber: '0812-4567-8901',
+        provinsi: 'DKI Jakarta',
+        kabupaten: 'Kota Jakarta Selatan',
+        kecamatan: 'Kebayoran Baru',
+        desa: 'Senayan',
+        postalCode: '12190',
+        detailAlamat: 'Gedung Wisma Nusantara Lt. 5, Jl. Sudirman',
+        isPrimary: false
+      }
+    ],
+    createdAt: '2025-01-15T08:00:00Z'
+  },
+  {
+    id: 'user-seller-sultra',
+    name: 'La Ode Muhammad Arifin',
+    email: 'laode.arifin@barakatitenun.id',
+    password: 'penjual123',
+    phoneNumber: '0821-9876-5432',
+    role: 'seller',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
+    addresses: [
+      {
+        recipientName: 'Galeri Tenun Barakati Muna',
+        phoneNumber: '0821-9876-5432',
+        provinsi: 'Sulawesi Tenggara',
+        kabupaten: 'Kabupaten Muna',
+        kecamatan: 'Lohia',
+        desa: 'Masalili (Sentra Tenun)',
+        postalCode: '93652',
+        detailAlamat: 'Jl. Poros Masalili No. 18, Sentra Tenun Tradisional Muna',
+        isPrimary: true
+      }
+    ],
+    storeId: 'store-sultra-1',
+    createdAt: '2024-11-10T10:00:00Z'
+  },
+  {
+    id: 'user-admin-1',
+    name: 'Administrator ProdukNusantara',
+    email: 'naylhaalyasyahira@gmail.com',
+    password: 'admin123',
+    phoneNumber: '0811-4000-8899',
+    role: 'admin',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    addresses: [
+      {
+        recipientName: 'Kantor Pusat ProdukNusantara',
+        phoneNumber: '0811-4000-8899',
+        provinsi: 'Sulawesi Tenggara',
+        kabupaten: 'Kota Kendari',
+        kecamatan: 'Kadia',
+        desa: 'Bende',
+        postalCode: '93117',
+        detailAlamat: 'Kawasan UMKM Center Bumi Anoa, Jl. Ahmad Yani No. 88',
+        isPrimary: true
+      }
+    ],
+    createdAt: '2024-08-01T00:00:00Z'
+  }
+];
+
+export const INITIAL_STORES: Store[] = [
+  {
+    id: 'store-sultra-1',
+    ownerId: 'user-seller-sultra',
+    name: 'Tenun Barakati Muna & Buton',
+    slug: 'tenun-barakati-muna-buton',
+    slogan: 'Karya Asli Pengrajin Perempuan Masalili & Buton',
+    description: 'Menyediakan kain tenun khas Muna & Buton Sulawesi Tenggara ditenun secara tradisional menggunakan alat tenun bukan mesin (ATBM) dan pewarna alam lokal.',
+    logo: 'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=200&auto=format&fit=crop&q=80',
+    banner: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=1200&auto=format&fit=crop&q=80',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Muna',
+    kecamatan: 'Lohia',
+    desa: 'Masalili (Sentra Tenun)',
+    rating: 4.9,
+    totalSold: 342,
+    isVerified: true,
+    status: 'approved',
+    nib: '9120003849102',
+    phoneNumber: '0821-9876-5432',
+    joinedAt: '2024-11-12T00:00:00Z'
+  },
+  {
+    id: 'store-sultra-2',
+    ownerId: 'user-seller-2',
+    name: 'Mete Super Anoa Kendari',
+    slug: 'mete-super-anoa-kendari',
+    slogan: 'Kacang Mete Pilihan Kualitas Ekspor Asli Kendari',
+    description: 'Produsen dan pengolah kacang mete Sulawesi Tenggara kualitas Grade A super utuh. Digoreng dengan minyak kelapa murni tanpa MSG.',
+    logo: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=200&auto=format&fit=crop&q=80',
+    banner: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1200&auto=format&fit=crop&q=80',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kota Kendari',
+    kecamatan: 'Kadia',
+    desa: 'Bende',
+    rating: 4.8,
+    totalSold: 1250,
+    isVerified: true,
+    status: 'approved',
+    nib: '8120002934105',
+    phoneNumber: '0813-8822-7711',
+    joinedAt: '2024-10-05T00:00:00Z'
+  },
+  {
+    id: 'store-sultra-3',
+    ownerId: 'user-seller-3',
+    name: 'Kopi Tolaki Pegunungan Mekongga',
+    slug: 'kopi-tolaki-pegunungan-mekongga',
+    slogan: 'Aroma Warisan Leluhur dari Puncak Konawe & Kolaka',
+    description: 'Kopi Robusta & Arabika organik yang ditanam di lereng pegunungan Mekongga Sulawesi Tenggara. Dipetik merah sempurna dengan proses natural & honey.',
+    logo: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=200&auto=format&fit=crop&q=80',
+    banner: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1200&auto=format&fit=crop&q=80',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Konawe',
+    kecamatan: 'Unaaha',
+    desa: 'Tuoy',
+    rating: 4.9,
+    totalSold: 580,
+    isVerified: true,
+    status: 'approved',
+    nib: '7120004592031',
+    phoneNumber: '0852-4411-9988',
+    joinedAt: '2024-12-01T00:00:00Z'
+  },
+  {
+    id: 'store-sultra-4',
+    ownerId: 'user-seller-4',
+    name: 'Sentra Anyaman Serat Wakatobi',
+    slug: 'sentra-anyaman-serat-wakatobi',
+    slogan: 'Kerajinan Tangan Berkelanjutan dari Pesisir Wakatobi',
+    description: 'Kerajinan anyaman topi, tas jinjing, dan wadah serbaguna yang terbuat dari pandan laut dan serat agel alami pesisir Wangi-Wangi Wakatobi.',
+    logo: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=200&auto=format&fit=crop&q=80',
+    banner: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1200&auto=format&fit=crop&q=80',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Wakatobi',
+    kecamatan: 'Wangi-Wangi Selatan',
+    desa: 'Liya Togo',
+    rating: 4.7,
+    totalSold: 198,
+    isVerified: true,
+    status: 'approved',
+    nib: '6120009283719',
+    phoneNumber: '0822-7766-5544',
+    joinedAt: '2025-01-08T00:00:00Z'
+  },
+  {
+    id: 'store-jabar-1',
+    ownerId: 'user-seller-5',
+    name: 'Batik Parahyangan & Rajapolah',
+    slug: 'batik-parahyangan-rajapolah',
+    slogan: 'Pesona Tradisi Sunda dalam Sentuhan Modern',
+    description: 'Pusat kain batik cap Jawa Barat dan anyaman bambu Rajapolah Tasikmalaya ramah lingkungan.',
+    logo: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=200&auto=format&fit=crop&q=80',
+    banner: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=1200&auto=format&fit=crop&q=80',
+    provinsi: 'Jawa Barat',
+    kabupaten: 'Kota Bandung',
+    kecamatan: 'Coblong',
+    desa: 'Dago',
+    rating: 4.9,
+    totalSold: 890,
+    isVerified: true,
+    status: 'approved',
+    nib: '5120001837492',
+    phoneNumber: '0812-9988-1122',
+    joinedAt: '2024-09-18T00:00:00Z'
+  },
+  {
+    id: 'store-jogja-1',
+    ownerId: 'user-seller-6',
+    name: 'Dapur Bakpia & Rempah Kencana',
+    slug: 'dapur-bakpia-rempah-kencana',
+    slogan: 'Oleh-oleh Legendaris Cita Rasa Keraton',
+    description: 'Bakpia basah dan kering khas Jogja dengan isian kacang hijau kupas asli dan aneka varian kekinian.',
+    logo: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&auto=format&fit=crop&q=80',
+    banner: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&auto=format&fit=crop&q=80',
+    provinsi: 'DI Yogyakarta',
+    kabupaten: 'Kota Yogyakarta',
+    kecamatan: 'Ngampilan (Sentra Bakpia)',
+    desa: 'Notoprajan',
+    rating: 4.8,
+    totalSold: 2100,
+    isVerified: true,
+    status: 'approved',
+    nib: '4120005829104',
+    phoneNumber: '0878-3344-5566',
+    joinedAt: '2024-08-15T00:00:00Z'
+  }
+];
+
+export const INITIAL_PRODUCTS: Product[] = [
+  // --- Sulawesi Tenggara Focus ---
+  {
+    id: 'prod-sultra-01',
+    storeId: 'store-sultra-1',
+    storeName: 'Tenun Barakati Muna & Buton',
+    name: 'Kain Tenun Tradisional Masalili Muna Pewarna Alami',
+    slug: 'kain-tenun-tradisional-masalili-muna',
+    category: 'Fashion',
+    price: 385000,
+    originalPrice: 450000,
+    discountPercent: 14,
+    stock: 18,
+    sold: 84,
+    weight: 450,
+    rating: 4.9,
+    reviewCount: 38,
+    images: [
+      'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Kain tenun khas Kabupaten Muna Sulawesi Tenggara dari Desa Masalili. Ditenun secara cermat selama 2-3 minggu dengan motif lepa-lepa dan bhotu. Menggunakan benang katun halus berpewarna alami kulit kayu mahoni dan indigofera. Sangat cocok untuk bahan kemeja resmi, rompi, dress etnik, atau kain bawahan formal.',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Muna',
+    kecamatan: 'Lohia',
+    desa: 'Masalili (Sentra Tenun)',
+    tags: ['Tenun Muna', 'Sulawesi Tenggara', 'Bumi Anoa', 'Fashion Etnik', 'Handmade'],
+    isFeatured: true,
+    isBestSeller: true,
+    createdAt: '2025-01-10T10:00:00Z'
+  },
+  {
+    id: 'prod-sultra-02',
+    storeId: 'store-sultra-2',
+    storeName: 'Mete Super Anoa Kendari',
+    name: 'Kacang Mete Kendari Goreng Gurih Bawang Original 500g',
+    slug: 'kacang-mete-kendari-goreng-gurih-500g',
+    category: 'Oleh-oleh Khas Daerah',
+    price: 89000,
+    originalPrice: 105000,
+    discountPercent: 15,
+    stock: 65,
+    sold: 620,
+    weight: 520,
+    rating: 4.9,
+    reviewCount: 142,
+    images: [
+      'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Kacang mete kualitas super asli panen petani Sulawesi Tenggara. Biji utuh, renyah, dan digoreng dengan minyak kelapa higienis dibumbui bawang putih gurih tanpa pengawet. Kemasan ziplock kedap udara menjamin kesegaran dan kerenyahan hingga 6 bulan.',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kota Kendari',
+    kecamatan: 'Kadia',
+    desa: 'Bende',
+    tags: ['Mete Kendari', 'Oleh-oleh Sultra', 'Kacang Mede', 'Camilan Sehat', 'Snack Nusantara'],
+    isFeatured: true,
+    isBestSeller: true,
+    createdAt: '2025-01-12T09:30:00Z'
+  },
+  {
+    id: 'prod-sultra-03',
+    storeId: 'store-sultra-3',
+    storeName: 'Kopi Tolaki Pegunungan Mekongga',
+    name: 'Kopi Bubuk Robusta Tolaki Organik Khas Mekongga 250g',
+    slug: 'kopi-bubuk-robusta-tolaki-mekongga-250g',
+    category: 'Minuman',
+    price: 45000,
+    originalPrice: 50000,
+    discountPercent: 10,
+    stock: 40,
+    sold: 195,
+    weight: 270,
+    rating: 4.8,
+    reviewCount: 65,
+    images: [
+      'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Kopi bubuk tradisional suku Tolaki Sulawesi Tenggara dari perkebunan pegunungan Mekongga, Kabupaten Konawe & Kolaka. Memiliki profil rasa bold dengan sentuhan rempah cokelat dan karamel alami yang pekat. Dipanggang dengan tingkat medium-dark roast.',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Konawe',
+    kecamatan: 'Unaaha',
+    desa: 'Tuoy',
+    tags: ['Kopi Tolaki', 'Kopi Sultra', 'Robusta Nusantara', 'Kopi Organik'],
+    isFeatured: true,
+    isBestSeller: false,
+    createdAt: '2025-01-14T14:15:00Z'
+  },
+  {
+    id: 'prod-sultra-04',
+    storeId: 'store-sultra-4',
+    storeName: 'Sentra Anyaman Serat Wakatobi',
+    name: 'Tas Jinjing Etnik Pandan Laut Wakatobi Premium',
+    slug: 'tas-jinjing-etnik-pandan-laut-wakatobi',
+    category: 'Kerajinan Tangan',
+    price: 135000,
+    originalPrice: 160000,
+    discountPercent: 16,
+    stock: 14,
+    sold: 48,
+    weight: 380,
+    rating: 4.7,
+    reviewCount: 19,
+    images: [
+      'https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Tas anyaman karya mama-mama pengrajin pesisir Liya Togo Wakatobi. Terbuat dari serat pandan laut kering pilihan yang dianyam halus dengan handle kulit sintetis kuat. Ramah lingkungan, kokoh, dan bernilai estetika tinggi untuk liburan atau kegiatan kasual.',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Wakatobi',
+    kecamatan: 'Wangi-Wangi Selatan',
+    desa: 'Liya Togo',
+    tags: ['Anyaman Wakatobi', 'Kerajinan Laut', 'Handicraft', 'Eco Friendly'],
+    isFeatured: false,
+    isBestSeller: false,
+    createdAt: '2025-01-18T11:00:00Z'
+  },
+  {
+    id: 'prod-sultra-05',
+    storeId: 'store-sultra-1',
+    storeName: 'Tenun Barakati Muna & Buton',
+    name: 'Selendang Tenun Songket Buton Motif Lawa Emas',
+    slug: 'selendang-tenun-songket-buton-motif-lawa-emas',
+    category: 'Fashion',
+    price: 215000,
+    originalPrice: 250000,
+    discountPercent: 14,
+    stock: 22,
+    sold: 96,
+    weight: 250,
+    rating: 5.0,
+    reviewCount: 31,
+    images: [
+      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Selendang tenun asli warisan Kesultanan Buton Kota Baubau & Pasarwajo. Dihiasi benang pakan emas bermotif Lawa yang melambangkan keagungan dan kehormatan. Cocok disampirkan di bahu pada acara wisuda, resepsi pernikahan, dan festival budaya.',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Buton',
+    kecamatan: 'Pasarwajo',
+    desa: 'Kombeli',
+    tags: ['Tenun Buton', 'Baubau', 'Selendang Songket', 'Budaya Sultra'],
+    isFeatured: true,
+    isBestSeller: true,
+    createdAt: '2025-01-20T16:20:00Z'
+  },
+  {
+    id: 'prod-sultra-06',
+    storeId: 'store-sultra-2',
+    storeName: 'Mete Super Anoa Kendari',
+    name: 'Madu Hutan Liar Murni Rawa Aopa Sultra 500ml',
+    slug: 'madu-hutan-liar-murni-rawa-aopa-500ml',
+    category: 'Produk Pertanian',
+    price: 110000,
+    originalPrice: 125000,
+    discountPercent: 12,
+    stock: 30,
+    sold: 145,
+    weight: 650,
+    rating: 4.9,
+    reviewCount: 47,
+    images: [
+      'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1587049352851-8d4e89133924?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Madu murni dari lebah hutan raksasa (Apis dorsata) yang bersarang di pepohonan lebat Taman Nasional Rawa Aopa Watumohai, perbatasan Konawe Selatan dan Bombana. Kaya akan enzim alami, antioksidan, dan tanpa pemanis buatan sama sekali.',
+    provinsi: 'Sulawesi Tenggara',
+    kabupaten: 'Kabupaten Konawe Selatan',
+    kecamatan: 'Moramo',
+    desa: 'Moramo',
+    tags: ['Madu Hutan Sultra', 'Rawa Aopa', 'Produk Pertanian', 'Herbal Alami'],
+    isFeatured: false,
+    isBestSeller: false,
+    createdAt: '2025-01-22T08:00:00Z'
+  },
+  // --- National Products from Various Provinces ---
+  {
+    id: 'prod-nat-01',
+    storeId: 'store-jabar-1',
+    storeName: 'Batik Parahyangan & Rajapolah',
+    name: 'Kemeja Batik Tulis Pria Motif Megamendung Halus',
+    slug: 'kemeja-batik-tulis-pria-motif-megamendung',
+    category: 'Fashion',
+    price: 275000,
+    originalPrice: 320000,
+    discountPercent: 14,
+    stock: 25,
+    sold: 310,
+    weight: 300,
+    rating: 4.8,
+    reviewCount: 88,
+    images: [
+      'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Kemeja pria batik katun primisima premium dengan motif Megamendung khas Jawa Barat bergradasi warna emerald dan navy. Jahitan rapi berkancing tersembunyi dengan furing adem tidak gerah.',
+    provinsi: 'Jawa Barat',
+    kabupaten: 'Kota Bandung',
+    kecamatan: 'Coblong',
+    desa: 'Dago',
+    tags: ['Batik Pria', 'Megamendung', 'Jawa Barat', 'Kemeja Formal'],
+    isFeatured: true,
+    isBestSeller: true,
+    createdAt: '2025-01-05T12:00:00Z'
+  },
+  {
+    id: 'prod-nat-02',
+    storeId: 'store-jogja-1',
+    storeName: 'Dapur Bakpia & Rempah Kencana',
+    name: 'Bakpia Basah Khas Jogja Isi Kacang Hijau Kupas 1 Kotak',
+    slug: 'bakpia-basah-jogja-kacang-hijau',
+    category: 'Makanan',
+    price: 38000,
+    originalPrice: 45000,
+    discountPercent: 15,
+    stock: 50,
+    sold: 840,
+    weight: 480,
+    rating: 4.9,
+    reviewCount: 215,
+    images: [
+      'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Bakpia kukus dan panggang khas kawasan Pathuk & Ngampilan Yogyakarta. Kulit lembut dengan isian kacang hijau kupas manis legit alami tanpa pengawet sintetik. Fresh diproduksi setiap hari kerja.',
+    provinsi: 'DI Yogyakarta',
+    kabupaten: 'Kota Yogyakarta',
+    kecamatan: 'Ngampilan (Sentra Bakpia)',
+    desa: 'Notoprajan',
+    tags: ['Bakpia Jogja', 'Kue Basah', 'Kuliner Nusantara', 'Oleh-oleh'],
+    isFeatured: false,
+    isBestSeller: true,
+    createdAt: '2025-01-11T07:45:00Z'
+  },
+  {
+    id: 'prod-nat-03',
+    storeId: 'store-jabar-1',
+    storeName: 'Batik Parahyangan & Rajapolah',
+    name: 'Wadah Saji Anyaman Bambu Rajapolah Halus Set 3 pcs',
+    slug: 'wadah-saji-anyaman-bambu-rajapolah-set',
+    category: 'Peralatan Rumah Tangga',
+    price: 95000,
+    originalPrice: 110000,
+    discountPercent: 13,
+    stock: 35,
+    sold: 112,
+    weight: 700,
+    rating: 4.8,
+    reviewCount: 36,
+    images: [
+      'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1544816155-12df9643f363?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Set wadah saji buah dan cemilan anyaman bambu apus dari pengrajin Rajapolah Tasikmalaya. Diproses pengasapan alami bebas jamur dan dilapisi pernis food-grade aman untuk makanan.',
+    provinsi: 'Jawa Barat',
+    kabupaten: 'Kabupaten Tasikmalaya',
+    kecamatan: 'Rajapolah (Sentra Anyaman)',
+    desa: 'Rajapolah',
+    tags: ['Anyaman Bambu', 'Peralatan Rumah', 'Alat Dapur Etnik', 'Tasikmalaya'],
+    isFeatured: false,
+    isBestSeller: false,
+    createdAt: '2025-01-16T15:00:00Z'
+  },
+  {
+    id: 'prod-nat-04',
+    storeId: 'store-jogja-1',
+    storeName: 'Dapur Bakpia & Rempah Kencana',
+    name: 'Sabun Batang Alami Minyak Kelapa & Serai Rempah Tradisional',
+    slug: 'sabun-alami-kelapa-serai-rempah',
+    category: 'Kecantikan',
+    price: 28000,
+    originalPrice: 35000,
+    discountPercent: 20,
+    stock: 80,
+    sold: 340,
+    weight: 120,
+    rating: 4.9,
+    reviewCount: 78,
+    images: [
+      'https://images.unsplash.com/photo-1608248597359-5613531b2682?w=800&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&auto=format&fit=crop&q=80'
+    ],
+    description: 'Sabun mandi herbal buatan tangan (cold process soap) menggunakan minyak kelapa murni, minyak zaitun, dan minyak atsiri serai wangi Nusantara. Menghaluskan kulit, menyegarkan badan, dan meredakan iritasi tanpa SLS dan paraben.',
+    provinsi: 'DI Yogyakarta',
+    kabupaten: 'Kabupaten Bantul',
+    kecamatan: 'Imogiri (Sentra Batik)',
+    desa: 'Wukirsari',
+    tags: ['Sabun Herbal', 'Kecantikan Alami', 'Zero Waste', 'Aromaterapi'],
+    isFeatured: true,
+    isBestSeller: false,
+    createdAt: '2025-01-19T13:30:00Z'
+  }
+];
+
+export const INITIAL_REVIEWS: Review[] = [
+  {
+    id: 'rev-01',
+    productId: 'prod-sultra-01',
+    buyerId: 'user-buyer-1',
+    buyerName: 'Siti Rahmawati',
+    buyerAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    comment: 'Kain tenun Masalili ini luar biasa cantik! Warnanya alami dan tekstur tenunannya sangat padat dan rapi. Bangga sekali memakai karya pengrajin Muna Sulawesi Tenggara.',
+    photos: ['https://images.unsplash.com/photo-1607344645866-009c320c5ab8?w=400&auto=format&fit=crop&q=80'],
+    createdAt: '2025-01-25T14:20:00Z'
+  },
+  {
+    id: 'rev-02',
+    productId: 'prod-sultra-02',
+    buyerId: 'user-buyer-1',
+    buyerName: 'Siti Rahmawati',
+    buyerAvatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    comment: 'Mete Kendari memang juara! Kacangnya besar utuh, renyah sekali dan tidak apek. Rasa bawang gurihnya pas tidak keasinan. Pasti langganan lagi.',
+    photos: [],
+    createdAt: '2025-01-28T09:15:00Z'
+  },
+  {
+    id: 'rev-03',
+    productId: 'prod-sultra-03',
+    buyerId: 'user-buyer-2',
+    buyerName: 'Bambang Kusuma',
+    buyerAvatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    comment: 'Kopi Tolaki aromanya mantap saat diseduh tubruk. Ada aftertaste dark chocolate yang legit. Packaging rapi dan pengiriman cepat.',
+    photos: [],
+    createdAt: '2025-01-29T16:40:00Z'
+  }
+];
+
+export const AVAILABLE_COURIERS: CourierService[] = [
+  { code: 'jne-reg', name: 'JNE Express', service: 'Reguler (2-3 Hari)', cost: 22000, etd: '2-3 hari' },
+  { code: 'jne-yes', name: 'JNE Express', service: 'YES (Yakin Esok Sampai)', cost: 42000, etd: '1 hari' },
+  { code: 'sicepat-reg', name: 'SiCepat Ekspres', service: 'Reguler Cepat', cost: 20000, etd: '2-3 hari' },
+  { code: 'pos-kilat', name: 'Pos Indonesia', service: 'Pos Kilat Khusus Se-Nusantara', cost: 18000, etd: '3-4 hari' },
+  { code: 'jnt-ez', name: 'J&T Express', service: 'EZ Jemput Antar', cost: 21000, etd: '2-3 hari' }
+];
+
+export const PAYMENT_METHODS: PaymentMethod[] = [
+  {
+    code: 'qris',
+    name: 'QRIS Nusantara (Scan Instan)',
+    type: 'qris',
+    instructions: 'Buka aplikasi BCA Mobile, GoPay, OVO, Dana, LinkAja, atau m-Banking Anda, lalu arahkan kamera ke kode QRIS.',
+    iconName: 'QrCode'
+  },
+  {
+    code: 'va-bca',
+    name: 'BCA Virtual Account',
+    type: 'virtual_account',
+    accountNumber: '8092-3819-2049-1829',
+    instructions: 'Transfer melalui ATM BCA, KlikBCA, atau m-BCA ke nomor Virtual Account di atas.',
+    iconName: 'Building2'
+  },
+  {
+    code: 'va-mandiri',
+    name: 'Mandiri Virtual Account',
+    type: 'virtual_account',
+    accountNumber: '8870-0192-8374-6512',
+    instructions: 'Pilih Bayar/Beli -> Multipayment -> Masukkan kode perusahaan 88700 dan no VA.',
+    iconName: 'Building2'
+  },
+  {
+    code: 'va-bri',
+    name: 'BRI Virtual Account (BRIVA)',
+    type: 'virtual_account',
+    accountNumber: '1289-4920-1928-3849',
+    instructions: 'Masuk menu BRIVA di BRImo, masukkan 16 digit nomor virtual account.',
+    iconName: 'Building2'
+  },
+  {
+    code: 'ewallet-gopay',
+    name: 'GoPay / GoPay Later',
+    type: 'ewallet',
+    instructions: 'Konfirmasi pembayaran langsung lewat notifikasi atau aplikasi GoPay Anda.',
+    iconName: 'Wallet'
+  },
+  {
+    code: 'cod',
+    name: 'COD (Bayar Tunai di Tempat)',
+    type: 'cod',
+    instructions: 'Siapkan uang pas saat kurir tiba mengantarkan paket ke alamat Anda.',
+    iconName: 'Truck'
+  }
+];
+
+export const CATEGORIES_LIST = [
+  { name: 'Makanan', icon: 'Utensils', count: 142, desc: 'Kuliner tradisional, camilan, dan lauk siap saji' },
+  { name: 'Minuman', icon: 'Coffee', count: 86, desc: 'Kopi Nusantara, teh herbal, dan wedang rempah' },
+  { name: 'Fashion', icon: 'Shirt', count: 210, desc: 'Tenun, batik, kebaya modern, dan pakaian etnik' },
+  { name: 'Kerajinan Tangan', icon: 'Sparkles', count: 185, desc: 'Anyaman bambu, ukiran kayu, gerabah, dan perak' },
+  { name: 'Produk Pertanian', icon: 'Wheat', count: 98, desc: 'Madu hutan, beras organik, rempah, dan minyak kelapa' },
+  { name: 'Kecantikan', icon: 'Heart', count: 64, desc: 'Perawatan kulit alami, lulur rempah, dan minyak atsiri' },
+  { name: 'Peralatan Rumah Tangga', icon: 'Home', count: 115, desc: 'Perabot kayu jati, wadah saji anyaman, dan hiasan rumah' },
+  { name: 'Oleh-oleh Khas Daerah', icon: 'Gift', count: 240, desc: 'Mete Kendari, bakpia, kemplang, dan cenderamata khas' }
+];

@@ -1,0 +1,6 @@
+{
+  "name": "ProdukNusantara - Marketplace UMKM Indonesia",
+  "description": "Platform marketplace modern untuk promosi, penjualan, dan pembelian produk UMKM dari seluruh Indonesia dengan sorotan khusus UMKM lokal Sulawesi Tenggara.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
